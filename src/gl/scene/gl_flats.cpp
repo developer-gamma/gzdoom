@@ -30,13 +30,11 @@
 #include "r_defs.h"
 #include "r_sky.h"
 #include "r_utility.h"
-#include "g_level.h"
 #include "doomstat.h"
 #include "d_player.h"
-#include "portal.h"
-#include "templates.h"
 #include "g_levellocals.h"
 #include "actorinlines.h"
+#include "hwrenderer/dynlights/hw_dynlightdata.h"
 
 #include "gl/system/gl_interface.h"
 #include "gl/system/gl_cvars.h"
@@ -44,13 +42,9 @@
 #include "gl/renderer/gl_lightdata.h"
 #include "gl/renderer/gl_renderstate.h"
 #include "gl/data/gl_vertexbuffer.h"
-#include "gl/dynlights/gl_dynlight.h"
 #include "gl/dynlights/gl_lightbuffer.h"
 #include "gl/scene/gl_drawinfo.h"
-#include "gl/shaders/gl_shader.h"
 #include "gl/scene/gl_scenedrawer.h"
-#include "gl/textures/gl_material.h"
-#include "gl/utility/gl_clock.h"
 #include "gl/renderer/gl_quaddrawer.h"
 
 #ifdef _DEBUG
@@ -130,17 +124,17 @@ void GLFlat::SetupSubsectorLights(int pass, subsector_t * sub, int *dli)
 		}
 		iter_dlightf++;
 
-		// we must do the side check here because gl_SetupLight needs the correct plane orientation
+		// we must do the side check here because gl_GetLight needs the correct plane orientation
 		// which we don't have for Legacy-style 3D-floors
 		double planeh = plane.plane.ZatPoint(light);
-		if (gl_lights_checkside && ((planeh<light->Z() && ceiling) || (planeh>light->Z() && !ceiling)))
+		if ((planeh<light->Z() && ceiling) || (planeh>light->Z() && !ceiling))
 		{
 			node = node->nextLight;
 			continue;
 		}
 
 		p.Set(plane.plane.Normal(), plane.plane.fD());
-		gl_GetLight(sub->sector->PortalGroup, p, light, false, lightdata);
+		lightdata.GetLight(sub->sector->PortalGroup, p, light, false);
 		node = node->nextLight;
 	}
 
@@ -489,7 +483,8 @@ inline void GLFlat::PutFlat(bool fog)
 		list = masked ? GLDL_MASKEDFLATS : GLDL_PLAINFLATS;
 	}
 	dynlightindex = -1;	// make sure this is always initialized to something proper.
-	gl_drawinfo->drawlists[list].AddFlat (this);
+	auto newflat = gl_drawinfo->drawlists[list].NewFlat();
+	*newflat = *this;
 }
 
 //==========================================================================

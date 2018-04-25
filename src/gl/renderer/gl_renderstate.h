@@ -26,7 +26,7 @@
 #include <string.h>
 #include "gl/system/gl_interface.h"
 #include "r_data/matrix.h"
-#include "gl/textures/gl_material.h"
+#include "hwrenderer/textures/hw_material.h"
 #include "c_cvars.h"
 #include "r_defs.h"
 #include "r_data/r_translate.h"
@@ -82,7 +82,6 @@ class FRenderState
 	bool mBrightmapEnabled;
 	bool mColorMask[4];
 	bool currentColorMask[4];
-	int mLightIndex;
 	int mSpecialEffect;
 	int mTextureMode;
 	int mDesaturation;
@@ -325,11 +324,6 @@ public:
 				glDisable(GL_CLIP_DISTANCE0);
 			}
 		}
-	}
-
-	void SetLightIndex(int n)
-	{
-		mLightIndex = n;
 	}
 
 	void EnableBrightmap(bool on)
