@@ -9,13 +9,7 @@
 #include "r_utility.h"
 #include "c_cvars.h"
 
-EXTERN_CVAR(Int, gl_weaponlight);
-
-inline	int getExtraLight()
-{
-	return r_viewpoint.extralight * gl_weaponlight;
-}
-
+struct HUDSprite;
 
 class GLSceneDrawer
 {
@@ -25,8 +19,6 @@ class GLSceneDrawer
 	sector_t *currentsector;
 
 	TMap<DPSprite*, int> weapondynlightindex;
-
-	void SetupWeaponLight();
 
 	void RenderMultipassStuff();
 	
@@ -68,18 +60,13 @@ public:
 	void SetFixedColormap(player_t *player);
 	void DrawScene(int drawmode);
 	void ProcessScene(bool toscreen = false);
-	void DrawBlend(sector_t * viewsector);
 	void EndDrawScene(sector_t * viewsector);
 	void DrawEndScene2D(sector_t * viewsector);
 
 	sector_t *RenderViewpoint(AActor * camera, GL_IRECT * bounds, float fov, float ratio, float fovratio, bool mainview, bool toscreen);
-	void RenderView(player_t *player);
+	sector_t *RenderView(player_t *player);
 	void WriteSavePic(player_t *player, FileWriter *file, int width, int height);
 
-	void DrawPSprite(player_t * player, DPSprite *psp, float sx, float sy, bool hudModelStep, int OverrideShader, bool alphatexture);
-	void DrawPlayerSprites(sector_t * viewsector, bool hudModelStep);
-	void DrawTargeterSprites();
-	
 	void InitClipper(angle_t a1, angle_t a2)
 	{
 		clipper.Clear();
@@ -100,7 +87,7 @@ public:
 	bool CheckFog(sector_t *frontsector, sector_t *backsector)
 	{
 		if (FixedColormap != CM_DEFAULT) return false;
-		return gl_CheckFog(frontsector, backsector);
+		return hw_CheckFog(frontsector, backsector);
 	}
 
 	void SetFog(int lightlevel, int rellight, const FColormap *cmap, bool isadditive)

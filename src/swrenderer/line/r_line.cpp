@@ -101,7 +101,7 @@ namespace swrenderer
 		{
 			if (Thread->ClipSegments->Check(WallC.sx1, WallC.sx2))
 			{
-				mSubsector->flags |= SSECF_DRAWN;
+				mSubsector->flags |= SSECMF_DRAWN;
 			}
 			return;
 		}
@@ -171,11 +171,11 @@ namespace swrenderer
 		{
 			// When using GL nodes, do a clipping test for these lines so we can
 			// mark their subsectors as visible for automap texturing.
-			if (hasglnodes && !(mSubsector->flags & SSECF_DRAWN))
+			if (hasglnodes && !(mSubsector->flags & SSECMF_DRAWN))
 			{
 				if (Thread->ClipSegments->Check(WallC.sx1, WallC.sx2))
 				{
-					mSubsector->flags |= SSECF_DRAWN;
+					mSubsector->flags |= SSECMF_DRAWN;
 				}
 			}
 			return;
@@ -187,7 +187,7 @@ namespace swrenderer
 
 		if (visible)
 		{
-			mSubsector->flags |= SSECF_DRAWN;
+			mSubsector->flags |= SSECMF_DRAWN;
 		}
 	}
 
@@ -346,6 +346,7 @@ namespace swrenderer
 		draw_segment->x2 = stop;
 		draw_segment->curline = mLineSegment;
 		draw_segment->foggy = foggy;
+		draw_segment->SubsectorDepth = Thread->OpaquePass->GetSubsectorDepth(mSubsector->Index());
 
 		bool markportal = ShouldMarkPortal();
 
