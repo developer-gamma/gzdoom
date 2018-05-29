@@ -985,8 +985,8 @@ void FSerializer::ReadObjects(bool hubtravel)
 	if (isReading() && BeginArray("objects"))
 	{
 		// Do not link any thinker that's being created here. This will be done by deserializing the thinker list later.
-		try
-		{
+		//try
+		//{
 			DThinker::bSerialOverride = true;
 			r->mDObjects.Resize(ArraySize());
 			// First iteration: create all the objects but do nothing with them yet.
@@ -1054,7 +1054,8 @@ void FSerializer::ReadObjects(bool hubtravel)
 				Printf(TEXTCOLOR_RED "Failed to restore all objects in savegame\n");
 				mErrors++;
 			}
-		}
+		//}
+		/*
 		catch(...)
 		{
 			// nuke all objects we created here.
@@ -1068,6 +1069,7 @@ void FSerializer::ReadObjects(bool hubtravel)
 			DThinker::bSerialOverride = false;
 			throw;
 		}
+		*/
 	}
 }
 
